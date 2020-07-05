@@ -4,25 +4,25 @@ import (
 	"log"
 )
 
-// Fields type, used to pass to `WithFields`.
+// Fields ...
 type Fields map[string]interface{}
 
-// Level type
+// Level ...
 type Level uint32
 
-// Convert the Level to a string. E.g. PanicLevel becomes "panic".
+// String ...
 func (level Level) String() string {
 	panic("not implemented...yet...")
 	return ""
 }
 
-// ParseLevel takes a string level and returns the Logrus log level constant.
+// ParseLeve ...
 func ParseLevel(lvl string) (Level, error) {
 	panic("not implemented...yet...")
 	return InfoLevel, nil
 }
 
-// UnmarshalText implements encoding.TextUnmarshaler.
+// UnmarshalText ...
 func (level *Level) UnmarshalText(text []byte) error {
 	panic("not implemented...yet...")
 	return nil
@@ -33,7 +33,7 @@ func (level Level) MarshalText() ([]byte, error) {
 	return nil, nil
 }
 
-// A constant exposing all logging levels
+// AllLevels ...
 var AllLevels = []Level{
 	PanicLevel,
 	FatalLevel,
@@ -44,26 +44,14 @@ var AllLevels = []Level{
 	TraceLevel,
 }
 
-// These are the different logging levels. You can set the logging level to log
-// on your instance of logger, obtained with `logrus.New()`.
+// Levels ...
 const (
-	// PanicLevel level, highest level of severity. Logs and then calls panic with the
-	// message passed to Debug, Info, ...
 	PanicLevel Level = iota
-	// FatalLevel level. Logs and then calls `logger.Exit(1)`. It will exit even if the
-	// logging level is set to Panic.
 	FatalLevel
-	// ErrorLevel level. Logs. Used for errors that should definitely be noted.
-	// Commonly used for hooks to send errors to an error tracking service.
 	ErrorLevel
-	// WarnLevel level. Non-critical entries that deserve eyes.
 	WarnLevel
-	// InfoLevel level. General operational entries about what's going on inside the
-	// application.
 	InfoLevel
-	// DebugLevel level. Usually only enabled when debugging. Very verbose logging.
 	DebugLevel
-	// TraceLevel level. Designates finer-grained informational events than the Debug.
 	TraceLevel
 )
 
@@ -74,9 +62,7 @@ var (
 	_ StdLogger = &Logger{}
 )
 
-// StdLogger is what your logrus-enabled library should take, that way
-// it'll accept a stdlib logger and a logrus logger. There's no standard
-// interface, this is the closest we get, unfortunately.
+// StdLogger ...
 type StdLogger interface {
 	Print(...interface{})
 	Printf(string, ...interface{})
@@ -91,10 +77,10 @@ type StdLogger interface {
 	Panicln(...interface{})
 }
 
-// The FieldLogger interface generalizes the Entry and Logger types
+// FieldLogger ...
 type FieldLogger interface {
 	WithField(key string, value interface{}) *Entry
-	WithFields(fields Fields) *Entry
+	WithFields(fields ...interface{}) *Entry
 	WithError(err error) *Entry
 
 	Debugf(format string, args ...interface{})
@@ -123,11 +109,4 @@ type FieldLogger interface {
 	Errorln(args ...interface{})
 	Fatalln(args ...interface{})
 	Panicln(args ...interface{})
-
-	// IsDebugEnabled() bool
-	// IsInfoEnabled() bool
-	// IsWarnEnabled() bool
-	// IsErrorEnabled() bool
-	// IsFatalEnabled() bool
-	// IsPanicEnabled() bool
 }

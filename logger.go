@@ -3,45 +3,25 @@ package pleat
 import (
 	"context"
 	"io"
+	"os"
 	"sync"
 	"time"
 )
 
-// LogFunction For big messages, it can be more efficient to pass a function
-// and only call it if the log level is actually enables rather than
-// generating the log message and then checking if the level is enabled
+// LogFunction ...
 type LogFunction func() []interface{}
 
 type Logger struct {
-	// The logs are `io.Copy`'d to this in a mutex. It's common to set this to a
-	// file, or leave it default which is `os.Stderr`. You can also set this to
-	// something more adventurous, such as logging to Kafka.
-	Out io.Writer
-	// Hooks for the logger instance. These allow firing events based on logging
-	// levels and log entries. For example, to send errors to an error tracking
-	// service, log to StatsD or dump the core on fatal errors.
-	Hooks LevelHooks
-	// All log entries pass through the formatter before logged to Out. The
-	// included formatters are `TextFormatter` and `JSONFormatter` for which
-	// TextFormatter is the default. In development (when a TTY is attached) it
-	// logs with colors, but to a file it wouldn't. You can easily implement your
-	// own that implements the `Formatter` interface, see the `README` or included
-	// formatters for examples.
-	Formatter Formatter
-
-	// Flag for whether to log caller info (off by default)
+	Out          io.Writer
+	ErrorOut     io.Writer
+	Hooks        LevelHooks
+	Formatter    Formatter
 	ReportCaller bool
+	Level        Level
+	ExitFunc     exitFunc
 
-	// The logging level the logger should log at. This is typically (and defaults
-	// to) `logrus.Info`, which allows Info(), Warn(), Error() and Fatal() to be
-	// logged.
-	Level Level
-	// Used to sync writing to the log. Locking is enabled by Default
-	mu MutexWrap
-	// Reusable empty entry
+	mu        MutexWrap
 	entryPool sync.Pool
-	// Function to exit the application, defaults to `os.Exit()`
-	ExitFunc exitFunc
 }
 
 type exitFunc func(int)
@@ -67,53 +47,48 @@ func (mw *MutexWrap) Disable() {
 	mw.disabled = true
 }
 
-// Creates a new logger. Configuration should be set by changing `Formatter`,
-// `Out` and `Hooks` directly on the default logger instance. You can also just
-// instantiate your own:
-//
-//    var log = &logrus.Logger{
-//      Out: os.Stderr,
-//      Formatter: new(logrus.TextFormatter),
-//      Hooks: make(logrus.LevelHooks),
-//      Level: logrus.DebugLevel,
-//    }
-//
-// It's recommended to make this a global instance called `log`.
+// New ...
 func New() *Logger {
-	panic("not implemented...yet...")
-	return nil
+	logger := &Logger{
+		Out:      os.Stdout,
+		ErrorOut: os.Stderr,
+	}
+
+	logger.entryPool = sync.Pool{
+		New: func() interface{} {
+			return NewEntry(logger)
+		},
+	}
+
+	return logger
 }
 
-// WithField allocates a new entry and adds a field to it.
-// Debug, Print, Info, Warn, Error, Fatal or Panic must be then applied to
-// this new returned entry.
-// If you want multiple fields, use `WithFields`.
+// WithField ...
 func (logger *Logger) WithField(key string, value interface{}) *Entry {
 	panic("not implemented...yet...")
 	return nil
 }
 
-// Adds a struct of fields to the log entry. All it does is call `WithField` for
-// each `Field`.
-func (logger *Logger) WithFields(fields Fields) *Entry {
-	panic("not implemented...yet...")
-	return nil
+// WithFields ...
+func (logger *Logger) WithFields(fields ...interface{}) *Entry {
+	entry := NewEntry(logger)
+
+	return entry.WithFields(fields...)
 }
 
-// Add an error as single field to the log entry.  All it does is call
-// `WithError` for the given `error`.
+// WithError ...
 func (logger *Logger) WithError(err error) *Entry {
 	panic("not implemented...yet...")
 	return nil
 }
 
-// Add a context to the log entry.
+// WithContext ...
 func (logger *Logger) WithContext(ctx context.Context) *Entry {
 	panic("not implemented...yet...")
 	return nil
 }
 
-// Overrides the time of the log entry.
+// WithTime ...
 func (logger *Logger) WithTime(t time.Time) *Entry {
 	panic("not implemented...yet...")
 	return nil
@@ -160,7 +135,11 @@ func (logger *Logger) Panicf(format string, args ...interface{}) {
 }
 
 func (logger *Logger) Log(level Level, args ...interface{}) {
-	panic("not implemented...yet...")
+	if logger.IsLevelEnabled(level) {
+		entry := logger.getEntry()
+		entry.Info(args...)
+		logger.putEntry(entry)
+	}
 }
 
 func (logger *Logger) LogFn(level Level, fn LogFunction) {
@@ -176,7 +155,7 @@ func (logger *Logger) Debug(args ...interface{}) {
 }
 
 func (logger *Logger) Info(args ...interface{}) {
-	panic("not implemented...yet...")
+	logger.Log(InfoLevel, args...)
 }
 
 func (logger *Logger) Print(args ...interface{}) {
@@ -290,44 +269,63 @@ func (logger *Logger) SetNoLock() {
 	panic("not implemented...yet...")
 }
 
-// SetLevel sets the logger level.
+// SetLevel ...
 func (logger *Logger) SetLevel(level Level) {
-	panic("not implemented...yet...")
+	logger.Level = level
 }
 
-// GetLevel returns the logger level.
+// GetLevel ...
 func (logger *Logger) GetLevel() Level {
 	panic("not implemented...yet...")
 	return InfoLevel
 }
 
-// AddHook adds a hook to the logger hooks.
+// AddHook ...
 func (logger *Logger) AddHook(hook Hook) {
 	panic("not implemented...yet...")
 }
 
-// IsLevelEnabled checks if the log level of the logger is greater than the level param
+// IsLevelEnabled ...
 func (logger *Logger) IsLevelEnabled(level Level) bool {
-	panic("not implemented...yet...")
-	return false
+	return level <= logger.Level
 }
 
-// SetFormatter sets the logger formatter.
+// SetFormatter ...
 func (logger *Logger) SetFormatter(formatter Formatter) {
-	panic("not implemented...yet...")
+	logger.Formatter = formatter
 }
 
-// SetOutput sets the logger output.
+// SetOutput ...
 func (logger *Logger) SetOutput(output io.Writer) {
-	panic("not implemented...yet...")
+	logger.Out = output
 }
 
+// SetErrorOutput ...
+func (logger *Logger) SetErrorOutput(output io.Writer) {
+	logger.ErrorOut = output
+}
+
+// SetReportCaller ...
 func (logger *Logger) SetReportCaller(reportCaller bool) {
-	panic("not implemented...yet...")
+	logger.ReportCaller = reportCaller
 }
 
-// ReplaceHooks replaces the logger hooks and returns the old ones
+// ReplaceHooks ...
 func (logger *Logger) ReplaceHooks(hooks LevelHooks) LevelHooks {
 	panic("not implemented...yet...")
 	return nil
+}
+
+func (logger *Logger) getEntry() *Entry {
+	entry, ok := logger.entryPool.Get().(*Entry)
+	if ok {
+		return entry
+	}
+
+	return NewEntry(logger)
+}
+
+func (logger *Logger) putEntry(entry *Entry) {
+	entry.Data = Fields{}
+	logger.entryPool.Put(entry)
 }

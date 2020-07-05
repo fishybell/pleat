@@ -3,89 +3,90 @@ package pleat
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"runtime"
 	"time"
 )
 
-// Defines the key when adding errors using WithError.
+// ErrorKey ...
 var ErrorKey = "error"
 
-// An entry is the final or intermediate Logrus logging entry. It contains all
-// the fields passed with WithField{,s}. It's finally logged when Trace, Debug,
-// Info, Warn, Error, Fatal or Panic is called on it. These objects can be
-// reused and passed around as much as you wish to avoid field duplication.
+// Entry ...
 type Entry struct {
-	Logger *Logger
-
-	// Contains all the fields set by the user.
-	Data Fields
-
-	// Time at which the log entry was created
-	Time time.Time
-
-	// Level the log entry was logged at: Trace, Debug, Info, Warn, Error, Fatal or Panic
-	// This field will be set on entry firing and the value will be equal to the one in Logger struct field.
-	Level Level
-
-	// Calling method, with package name
-	Caller *runtime.Frame
-
-	// Message passed to Trace, Debug, Info, Warn, Error, Fatal or Panic
+	Logger  *Logger
+	Data    Fields
+	Time    time.Time
+	Level   Level
+	Caller  *runtime.Frame
 	Message string
-
-	// When formatter is called in entry.log(), a Buffer may be set to entry
-	Buffer *bytes.Buffer
-
-	// Contains the context set by the user. Useful for hook processing etc.
+	Buffer  *bytes.Buffer
 	Context context.Context
-
-	// err may contain a field formatting error
-	err string
 }
 
+// NewEntry ...
 func NewEntry(logger *Logger) *Entry {
-	panic("not implemented...yet...")
-	return nil
+	return &Entry{
+		Logger: logger,
+	}
 }
 
-// Returns the bytes representation of this entry from the formatter.
+// Bytes ...
 func (entry *Entry) Bytes() ([]byte, error) {
 	panic("not implemented...yet...")
 	return nil, nil
 }
 
-// Returns the string representation from the reader and ultimately the
-// formatter.
+// String ...
 func (entry *Entry) String() (string, error) {
 	panic("not implemented...yet...")
 	return "", nil
 }
 
-// Add an error as single field (using the key defined in ErrorKey) to the Entry.
+// WithError ...
 func (entry *Entry) WithError(err error) *Entry {
 	panic("not implemented...yet...")
 	return nil
 }
 
-// Add a context to the Entry.
+// WithContext ...
 func (entry *Entry) WithContext(ctx context.Context) *Entry {
 	panic("not implemented...yet...")
 	return nil
 }
 
-// Add a single field to the Entry.
+// WithField ...
 func (entry *Entry) WithField(key string, value interface{}) *Entry {
 	panic("not implemented...yet...")
 	return nil
 }
 
-// Add a map of fields to the Entry.
-func (entry *Entry) WithFields(fields Fields) *Entry {
-	panic("not implemented...yet...")
-	return nil
+// WithFields ...
+func (entry *Entry) WithFields(fields ...interface{}) *Entry {
+	newEntry := *entry
+
+	for _, fieldUnknown := range fields {
+		switch field := fieldUnknown.(type) {
+		case Fields:
+			newEntry.Data = appendData(entry.Data, field)
+		case map[string]interface{}:
+			newEntry.Data = appendData(entry.Data, Fields(field))
+		default:
+			panic("not implemented...yet...")
+		}
+	}
+
+	return &newEntry
 }
 
-// Overrides the time of the Entry.
+func appendData(original, changes Fields) Fields {
+	for k, v := range changes {
+		original[k] = v
+	}
+
+	return original
+}
+
+// WithTime ...
 func (entry *Entry) WithTime(t time.Time) *Entry {
 	panic("not implemented...yet...")
 	return nil
@@ -96,14 +97,33 @@ func (entry Entry) HasCaller() (has bool) {
 	return
 }
 
-// This function is not declared with a pointer value because otherwise
-// race conditions will occur when using multiple goroutines
-func (entry Entry) log(level Level, msg string) {
-	panic("not implemented...yet...")
+func (entry Entry) log(level Level, args ...interface{}) {
+	// non-pointer function so changees don't effect future entries
+	entry.Level = level
+	entry.Message = fmt.Sprint(args...)
+	entry.write()
 }
 
+func (entry *Entry) write() {
+	entry.Logger.mu.Lock()
+	defer entry.Logger.mu.Unlock()
+
+	formatted, err := entry.Logger.Formatter.Format(entry)
+	if err != nil {
+		fmt.Fprintf(entry.Logger.ErrorOut, "Formatter failed to format, %v\n", err)
+		return
+	}
+
+	if _, err = entry.Logger.Out.Write(formatted); err != nil {
+		fmt.Fprintf(entry.Logger.ErrorOut, "Pleat failed to write log, %v\n", err)
+	}
+}
+
+// Log ...
 func (entry *Entry) Log(level Level, args ...interface{}) {
-	panic("not implemented...yet...")
+	if entry.Logger.IsLevelEnabled(level) {
+		entry.log(level, args...)
+	}
 }
 
 func (entry *Entry) Trace(args ...interface{}) {
@@ -119,7 +139,7 @@ func (entry *Entry) Print(args ...interface{}) {
 }
 
 func (entry *Entry) Info(args ...interface{}) {
-	panic("not implemented...yet...")
+	entry.Log(InfoLevel, args...)
 }
 
 func (entry *Entry) Warn(args ...interface{}) {
@@ -141,8 +161,6 @@ func (entry *Entry) Fatal(args ...interface{}) {
 func (entry *Entry) Panic(args ...interface{}) {
 	panic("not implemented...yet...")
 }
-
-// Entry Printf family functions
 
 func (entry *Entry) Logf(level Level, format string, args ...interface{}) {
 	panic("not implemented...yet...")
@@ -183,8 +201,6 @@ func (entry *Entry) Fatalf(format string, args ...interface{}) {
 func (entry *Entry) Panicf(format string, args ...interface{}) {
 	panic("not implemented...yet...")
 }
-
-// Entry Println family functions
 
 func (entry *Entry) Logln(level Level, args ...interface{}) {
 	panic("not implemented...yet...")

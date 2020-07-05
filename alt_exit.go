@@ -22,31 +22,17 @@ package pleat
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// Exit runs all the Logrus atexit handlers and then terminates the program using os.Exit(code)
+// Exit ...
 func Exit(code int) {
 	panic("not implemented...yet...")
 }
 
-// RegisterExitHandler appends a Logrus Exit handler to the list of handlers,
-// call logrus.Exit to invoke all handlers. The handlers will also be invoked when
-// any Fatal log entry is made.
-//
-// This method is useful when a caller wishes to use logrus to log a fatal
-// message but also needs to gracefully shutdown. An example usecase could be
-// closing database connections, or sending a alert that the application is
-// closing.
+// RegisterExitHandler ...
 func RegisterExitHandler(handler func()) {
 	panic("not implemented...yet...")
 }
 
-// DeferExitHandler prepends a Logrus Exit handler to the list of handlers,
-// call logrus.Exit to invoke all handlers. The handlers will also be invoked when
-// any Fatal log entry is made.
-//
-// This method is useful when a caller wishes to use logrus to log a fatal
-// message but also needs to gracefully shutdown. An example usecase could be
-// closing database connections, or sending a alert that the application is
-// closing.
+// DeferExitHandler ...
 func DeferExitHandler(handler func()) {
 	panic("not implemented...yet...")
 }

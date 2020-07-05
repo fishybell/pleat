@@ -1,31 +1,70 @@
 package pleat
 
 import (
+	"bufio"
 	"io"
+	"runtime"
 )
 
-// Writer at INFO level. See WriterLevel for details.
+// Writer ...
 func (logger *Logger) Writer() *io.PipeWriter {
-	panic("not implemented...yet...")
-	return nil
+	return logger.WriterLevel(logger.Level)
 }
 
-// WriterLevel returns an io.Writer that can be used to write arbitrary text to
-// the logger at the given log level. Each line written to the writer will be
-// printed in the usual way using formatters and hooks. The writer is part of an
-// io.Pipe and it is the callers responsibility to close the writer when done.
-// This can be used to override the standard library logger easily.
+// WriterLevel ...
 func (logger *Logger) WriterLevel(level Level) *io.PipeWriter {
-	panic("not implemented...yet...")
-	return nil
+	return NewEntry(logger).WriterLevel(level)
 }
 
+// Writer ...
 func (entry *Entry) Writer() *io.PipeWriter {
-	panic("not implemented...yet...")
+	return entry.WriterLevel(entry.Level)
 	return nil
 }
 
+// WriterLevel ...
 func (entry *Entry) WriterLevel(level Level) *io.PipeWriter {
-	panic("not implemented...yet...")
-	return nil
+	reader, writer := io.Pipe()
+
+	runtime.SetFinalizer(writer, writerFinalizer)
+	go entry.pipeReader(reader, level)
+
+	return writer
+}
+
+func (entry *Entry) pipeReader(reader *io.PipeReader, level Level) {
+	scanner := bufio.NewScanner(reader)
+
+	var print func(args ...interface{})
+
+	switch level {
+	case PanicLevel:
+		print = entry.Panic
+	case FatalLevel:
+		print = entry.Fatal
+	case ErrorLevel:
+		print = entry.Error
+	case WarnLevel:
+		print = entry.Warn
+	case InfoLevel:
+		print = entry.Info
+	case DebugLevel:
+		print = entry.Debug
+	case TraceLevel:
+		print = entry.Trace
+	}
+
+	for scanner.Scan() {
+		print(scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		entry.WithError(err).Error("Pleat pipe failed to read")
+	}
+
+	reader.Close()
+}
+
+func writerFinalizer(writer *io.PipeWriter) {
+	writer.Close()
 }
