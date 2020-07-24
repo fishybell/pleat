@@ -15,15 +15,15 @@ type defaultPool struct {
 }
 
 func (p *defaultPool) Put(buf *bytes.Buffer) {
-	panic("not implemented...yet...")
+	panic("defaultPool.Put not implemented...yet...")
 }
 
 func (p *defaultPool) Get() *bytes.Buffer {
-	panic("not implemented...yet...")
+	panic("defaultPool.Get not implemented...yet...")
 	return nil
 }
 
 // SetBufferPool ...
 func SetBufferPool(bp BufferPool) {
-	panic("not implemented...yet...")
+	panic("BufferPool. not implemented...yet...")
 }

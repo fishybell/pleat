@@ -30,6 +30,6 @@ type JSONFormatter struct {
 
 // Format ...
 func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
-	panic("not implemented...yet...")
+	panic("JSONFormatter.Format not implemented...yet...")
 	return nil, nil
 }

@@ -24,15 +24,15 @@ package pleat
 
 // Exit ...
 func Exit(code int) {
-	panic("not implemented...yet...")
+	panic("Exit not implemented...yet...")
 }
 
 // RegisterExitHandler ...
 func RegisterExitHandler(handler func()) {
-	panic("not implemented...yet...")
+	panic("RegisterExitHandler not implemented...yet...")
 }
 
 // DeferExitHandler ...
 func DeferExitHandler(handler func()) {
-	panic("not implemented...yet...")
+	panic("DeferExitHandler not implemented...yet...")
 }

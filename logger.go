@@ -65,7 +65,7 @@ func New() *Logger {
 
 // WithField ...
 func (logger *Logger) WithField(key string, value interface{}) *Entry {
-	panic("not implemented...yet...")
+	panic("Logger.WithField not implemented...yet...")
 	return nil
 }
 
@@ -78,60 +78,61 @@ func (logger *Logger) WithFields(fields ...interface{}) *Entry {
 
 // WithError ...
 func (logger *Logger) WithError(err error) *Entry {
-	panic("not implemented...yet...")
-	return nil
+	entry := NewEntry(logger)
+
+	return entry.WithError(err)
 }
 
 // WithContext ...
 func (logger *Logger) WithContext(ctx context.Context) *Entry {
-	panic("not implemented...yet...")
+	panic("Logger.WithContext not implemented...yet...")
 	return nil
 }
 
 // WithTime ...
 func (logger *Logger) WithTime(t time.Time) *Entry {
-	panic("not implemented...yet...")
+	panic("Logger.WithTime not implemented...yet...")
 	return nil
 }
 
 func (logger *Logger) Logf(level Level, format string, args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Logf not implemented...yet...")
 }
 
 func (logger *Logger) Tracef(format string, args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Tracef not implemented...yet...")
 }
 
 func (logger *Logger) Debugf(format string, args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Debugf not implemented...yet...")
 }
 
 func (logger *Logger) Infof(format string, args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Infof not implemented...yet...")
 }
 
 func (logger *Logger) Printf(format string, args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Printf not implemented...yet...")
 }
 
 func (logger *Logger) Warnf(format string, args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Warnf not implemented...yet...")
 }
 
 func (logger *Logger) Warningf(format string, args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Warningf not implemented...yet...")
 }
 
 func (logger *Logger) Errorf(format string, args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Errorf not implemented...yet...")
 }
 
 func (logger *Logger) Fatalf(format string, args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Fatalf not implemented...yet...")
 }
 
 func (logger *Logger) Panicf(format string, args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Panicf not implemented...yet...")
 }
 
 func (logger *Logger) Log(level Level, args ...interface{}) {
@@ -143,15 +144,15 @@ func (logger *Logger) Log(level Level, args ...interface{}) {
 }
 
 func (logger *Logger) LogFn(level Level, fn LogFunction) {
-	panic("not implemented...yet...")
+	panic("Logger.LogFn not implemented...yet...")
 }
 
 func (logger *Logger) Trace(args ...interface{}) {
-	panic("not implemented...yet...")
+	logger.Log(TraceLevel, args...)
 }
 
 func (logger *Logger) Debug(args ...interface{}) {
-	panic("not implemented...yet...")
+	logger.Log(DebugLevel, args...)
 }
 
 func (logger *Logger) Info(args ...interface{}) {
@@ -159,114 +160,114 @@ func (logger *Logger) Info(args ...interface{}) {
 }
 
 func (logger *Logger) Print(args ...interface{}) {
-	panic("not implemented...yet...")
+	logger.Info(args...)
 }
 
 func (logger *Logger) Warn(args ...interface{}) {
-	panic("not implemented...yet...")
+	logger.Log(WarnLevel, args...)
 }
 
 func (logger *Logger) Warning(args ...interface{}) {
-	panic("not implemented...yet...")
+	logger.Log(WarnLevel, args...)
 }
 
 func (logger *Logger) Error(args ...interface{}) {
-	panic("not implemented...yet...")
+	logger.Log(ErrorLevel, args...)
 }
 
 func (logger *Logger) Fatal(args ...interface{}) {
-	panic("not implemented...yet...")
+	logger.Log(FatalLevel, args...)
 }
 
 func (logger *Logger) Panic(args ...interface{}) {
-	panic("not implemented...yet...")
+	logger.Log(PanicLevel, args...)
 }
 
 func (logger *Logger) TraceFn(fn LogFunction) {
-	panic("not implemented...yet...")
+	panic("Logger.TraceFn not implemented...yet...")
 }
 
 func (logger *Logger) DebugFn(fn LogFunction) {
-	panic("not implemented...yet...")
+	panic("Logger.DebugFn not implemented...yet...")
 }
 
 func (logger *Logger) InfoFn(fn LogFunction) {
-	panic("not implemented...yet...")
+	panic("Logger.InfoFn not implemented...yet...")
 }
 
 func (logger *Logger) PrintFn(fn LogFunction) {
-	panic("not implemented...yet...")
+	panic("Logger.PrintFn not implemented...yet...")
 }
 
 func (logger *Logger) WarnFn(fn LogFunction) {
-	panic("not implemented...yet...")
+	panic("Logger.WarnFn not implemented...yet...")
 }
 
 func (logger *Logger) WarningFn(fn LogFunction) {
-	panic("not implemented...yet...")
+	panic("Logger.WarningFn not implemented...yet...")
 }
 
 func (logger *Logger) ErrorFn(fn LogFunction) {
-	panic("not implemented...yet...")
+	panic("Logger.ErrorFn not implemented...yet...")
 }
 
 func (logger *Logger) FatalFn(fn LogFunction) {
-	panic("not implemented...yet...")
+	panic("Logger.FatalFn not implemented...yet...")
 }
 
 func (logger *Logger) PanicFn(fn LogFunction) {
-	panic("not implemented...yet...")
+	panic("Logger.PanicFn not implemented...yet...")
 }
 
 func (logger *Logger) Logln(level Level, args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Logln not implemented...yet...")
 }
 
 func (logger *Logger) Traceln(args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Traceln not implemented...yet...")
 }
 
 func (logger *Logger) Debugln(args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Debugln not implemented...yet...")
 }
 
 func (logger *Logger) Infoln(args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Infoln not implemented...yet...")
 }
 
 func (logger *Logger) Println(args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Println not implemented...yet...")
 }
 
 func (logger *Logger) Warnln(args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Warnln not implemented...yet...")
 }
 
 func (logger *Logger) Warningln(args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Warningln not implemented...yet...")
 }
 
 func (logger *Logger) Errorln(args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Errorln not implemented...yet...")
 }
 
 func (logger *Logger) Fatalln(args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Fatalln not implemented...yet...")
 }
 
 func (logger *Logger) Panicln(args ...interface{}) {
-	panic("not implemented...yet...")
+	panic("Logger.Panicln not implemented...yet...")
 }
 
 func (logger *Logger) Exit(code int) {
-	panic("not implemented...yet...")
+	panic("Logger.Exit not implemented...yet...")
 }
 
 //When file is opened with appending mode, it's safe to
 //write concurrently to a file (within 4k message on Linux).
 //In these cases user can choose to disable the lock.
 func (logger *Logger) SetNoLock() {
-	panic("not implemented...yet...")
+	panic("Logger.SetNoLock not implemented...yet...")
 }
 
 // SetLevel ...
@@ -276,13 +277,13 @@ func (logger *Logger) SetLevel(level Level) {
 
 // GetLevel ...
 func (logger *Logger) GetLevel() Level {
-	panic("not implemented...yet...")
+	panic("Logger.GetLevel not implemented...yet...")
 	return InfoLevel
 }
 
 // AddHook ...
 func (logger *Logger) AddHook(hook Hook) {
-	panic("not implemented...yet...")
+	panic("Logger.AddHook not implemented...yet...")
 }
 
 // IsLevelEnabled ...
@@ -312,7 +313,7 @@ func (logger *Logger) SetReportCaller(reportCaller bool) {
 
 // ReplaceHooks ...
 func (logger *Logger) ReplaceHooks(hooks LevelHooks) LevelHooks {
-	panic("not implemented...yet...")
+	panic("Logger.ReplaceHooks not implemented...yet...")
 	return nil
 }
 

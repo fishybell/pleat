@@ -2,6 +2,8 @@ package pleat
 
 import (
 	"log"
+
+	"github.com/go-errors/errors"
 )
 
 // Fields ...
@@ -12,25 +14,41 @@ type Level uint32
 
 // String ...
 func (level Level) String() string {
-	panic("not implemented...yet...")
-	return ""
+	bytes, _ := level.MarshalText()
+	return string(bytes)
 }
 
 // ParseLeve ...
 func ParseLevel(lvl string) (Level, error) {
-	panic("not implemented...yet...")
+	panic("string.( not implemented...yet...")
 	return InfoLevel, nil
 }
 
 // UnmarshalText ...
 func (level *Level) UnmarshalText(text []byte) error {
-	panic("not implemented...yet...")
+	panic("Level.UnmarshalText not implemented...yet...")
 	return nil
 }
 
 func (level Level) MarshalText() ([]byte, error) {
-	panic("not implemented...yet...")
-	return nil, nil
+	switch level {
+	case PanicLevel:
+		return []byte("panic"), nil
+	case FatalLevel:
+		return []byte("fatal"), nil
+	case ErrorLevel:
+		return []byte("error"), nil
+	case WarnLevel:
+		return []byte("warn"), nil
+	case InfoLevel:
+		return []byte("info"), nil
+	case DebugLevel:
+		return []byte("debug"), nil
+	case TraceLevel:
+		return []byte("trace"), nil
+	}
+
+	return []byte("unknown"), errors.Errorf("Invalid Log Level")
 }
 
 // AllLevels ...

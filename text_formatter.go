@@ -25,6 +25,6 @@ type TextFormatter struct {
 
 // Format ...
 func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
-	panic("not implemented...yet...")
+	panic("TextFormatter.Format not implemented...yet...")
 	return nil, nil
 }

@@ -11,12 +11,12 @@ type LevelHooks map[Level][]Hook
 
 // Add ...
 func (hooks LevelHooks) Add(hook Hook) {
-	panic("not implemented...yet...")
+	panic("LevelHooks.Add not implemented...yet...")
 }
 
 // Fire ...
 func (hooks LevelHooks) Fire(level Level, entry *Entry) error {
-	panic("not implemented...yet...")
+	panic("LevelHooks.Fire not implemented...yet...")
 
 	return nil
 }
